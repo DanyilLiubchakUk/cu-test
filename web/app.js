@@ -87,15 +87,21 @@ function collectSpec() {
     },
     video: {
       enabled: checked("videoEnabled"),
-      recordTarget: "window",
+      recordTarget: field("recordTarget").value,
+      captureStrategy: "action-bursts",
       keepRaw: checked("keepRaw"),
-      idleMinimumSeconds: Number(field("idleMinimum").value || 3),
-      paddingBeforeMotion: Number(field("motionPadding").value || 1),
-      paddingAfterMotion: Number(field("motionPadding").value || 1),
-      preserveAfterActionSeconds: Number(field("afterAction").value || 2),
+      idleMinimumSeconds: Number(field("idleMinimum").value || 2),
+      maxFinalIdleSeconds: Number(field("maxFinalIdle").value || 1.5),
+      paddingBeforeMotion: Number(field("motionPadding").value || 0.5),
+      paddingAfterMotion: Number(field("motionPadding").value || 0.75),
+      preserveAfterActionSeconds: Number(field("afterAction").value || 1),
       speedLongWaitsBy: Number(field("speedLongWaits").value || 20),
       showSpeedLabel: checked("showSpeedLabel"),
       outputFormat: "mp4",
+      minOutputHeight: Number(field("minOutputHeight").value || 1080),
+      minOutputFps: 30,
+      privacyReview: true,
+      editingRequired: true,
     },
   });
 }
@@ -218,7 +224,10 @@ function applySpec(input) {
   form.querySelectorAll('input[name="format"]').forEach((input) => { input.checked = spec.report.formats.includes(input.value); });
   field("captureFailures").checked = spec.report.captureFailures;
   field("videoEnabled").checked = spec.video.enabled;
+  field("recordTarget").value = spec.video.recordTarget;
+  field("minOutputHeight").value = spec.video.minOutputHeight;
   field("idleMinimum").value = spec.video.idleMinimumSeconds;
+  field("maxFinalIdle").value = spec.video.maxFinalIdleSeconds;
   field("speedLongWaits").value = spec.video.speedLongWaitsBy;
   field("motionPadding").value = spec.video.paddingBeforeMotion;
   field("afterAction").value = spec.video.preserveAfterActionSeconds;

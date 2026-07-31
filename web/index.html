@@ -19,9 +19,9 @@
     <meta name="twitter:description" content="A local-first prompt studio for planning and launching Codex Computer Use tests." />
     <title>CU Test — Codex Computer Use Test Studio</title>
     <link rel="canonical" href="https://cu-test-beta.vercel.app/" />
-    <link rel="icon" href="/favicon.svg?v=0.2.0" type="image/svg+xml" />
-    <link rel="manifest" href="/site.webmanifest?v=0.2.0" />
-    <link rel="stylesheet" href="/styles.css?v=0.2.0" />
+    <link rel="icon" href="/favicon.svg?v=0.3.0" type="image/svg+xml" />
+    <link rel="manifest" href="/site.webmanifest?v=0.3.0" />
+    <link rel="stylesheet" href="/styles.css?v=0.3.0" />
   </head>
   <body>
     <a class="skip-link" href="#main-content">Skip to test builder</a>
@@ -152,12 +152,16 @@
                     </div>
                   </div>
                   <div class="settings-card video-settings">
-                    <div class="card-heading"><span>▶</span><div><h3>Video</h3><small>Cut idle time, preserve actions</small></div><label class="toggle-field compact"><input name="videoEnabled" type="checkbox" checked aria-label="Enable video capture" /><span class="toggle"></span></label></div>
+                    <div class="card-heading"><span>▶</span><div><h3>Action-only video</h3><small>Isolate test surfaces and remove thinking time</small></div><label class="toggle-field compact"><input name="videoEnabled" type="checkbox" checked aria-label="Enable video capture" /><span class="toggle"></span></label></div>
+                    <p class="recording-boundary"><strong>Target-only capture.</strong> Unrelated user windows, cursor movement, and notifications must never appear in the final video.</p>
                     <div class="mini-grid">
-                      <label class="field"><span>Idle cut after</span><div class="unit-input"><input name="idleMinimum" type="number" min="1" value="3" /><b>sec</b></div></label>
+                      <label class="field"><span>Capture scope</span><select name="recordTarget"><option value="active-window">Active test window</option><option value="agent-region">Agent-controlled region</option></select></label>
+                      <label class="field"><span>Quality floor</span><select name="minOutputHeight"><option value="1080">1080p</option><option value="1440">1440p</option><option value="2160">2160p</option><option value="720">720p</option></select></label>
+                      <label class="field"><span>Idle cut after</span><div class="unit-input"><input name="idleMinimum" type="number" min="1" value="2" /><b>sec</b></div></label>
+                      <label class="field"><span>Final idle max</span><div class="unit-input"><input name="maxFinalIdle" type="number" min="0.5" max="5" step="0.5" value="1.5" /><b>sec</b></div></label>
                       <label class="field"><span>Speed waits</span><div class="unit-input"><input name="speedLongWaits" type="number" min="1" value="20" /><b>×</b></div></label>
-                      <label class="field"><span>Motion padding</span><div class="unit-input"><input name="motionPadding" type="number" min="0" value="1" /><b>sec</b></div></label>
-                      <label class="field"><span>After actions</span><div class="unit-input"><input name="afterAction" type="number" min="0" value="2" /><b>sec</b></div></label>
+                      <label class="field"><span>Motion padding</span><div class="unit-input"><input name="motionPadding" type="number" min="0" step="0.25" value="0.5" /><b>sec</b></div></label>
+                      <label class="field"><span>After actions</span><div class="unit-input"><input name="afterAction" type="number" min="0" step="0.25" value="1" /><b>sec</b></div></label>
                     </div>
                     <div class="checks inline"><label><input name="keepRaw" type="checkbox" checked /><span>Keep raw</span></label><label><input name="showSpeedLabel" type="checkbox" checked /><span>Show speed label</span></label></div>
                   </div>
@@ -214,7 +218,7 @@
       </section>
     </main>
 
-    <footer><span>CU Test <b>0.2</b></span><span>Local bridge · App Server · Computer Use</span></footer>
+    <footer><span>CU Test <b>0.3</b></span><span>Local bridge · App Server · Computer Use</span></footer>
 
     <dialog id="connectionDialog" aria-labelledby="connectionTitle" aria-describedby="connectionDescription">
       <button class="dialog-close" id="closeDialog" aria-label="Close" type="button">×</button>
@@ -237,6 +241,6 @@
     </dialog>
 
     <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
-    <script type="module" src="/app.js?v=0.2.0"></script>
+    <script type="module" src="/app.js?v=0.3.0"></script>
   </body>
 </html>

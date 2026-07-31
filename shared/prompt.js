@@ -1,4 +1,4 @@
-export const SPEC_VERSION = 1;
+export const SPEC_VERSION = 2;
 
 export function defaultSpec() {
   return {
@@ -37,15 +37,21 @@ export function defaultSpec() {
     },
     video: {
       enabled: true,
-      recordTarget: "window",
+      recordTarget: "active-window",
+      captureStrategy: "action-bursts",
       keepRaw: true,
-      idleMinimumSeconds: 3,
-      paddingBeforeMotion: 1,
-      paddingAfterMotion: 1,
-      preserveAfterActionSeconds: 2,
+      idleMinimumSeconds: 2,
+      maxFinalIdleSeconds: 1.5,
+      paddingBeforeMotion: 0.5,
+      paddingAfterMotion: 0.75,
+      preserveAfterActionSeconds: 1,
       speedLongWaitsBy: 20,
       showSpeedLabel: true,
       outputFormat: "mp4",
+      minOutputHeight: 1080,
+      minOutputFps: 30,
+      privacyReview: true,
+      editingRequired: true,
     },
   };
 }
@@ -76,7 +82,43 @@ export function validateSpec(spec) {
   if (!Number.isFinite(duration) || duration < 1 || duration > 1440) {
     errors.push("Maximum duration must be between 1 and 1440 minutes.");
   }
+  if (spec.video?.enabled) {
+    if (!["active-window", "agent-region"].includes(spec.video.recordTarget)) {
+      errors.push("Video capture must target the active test window or an agent-controlled region, never the full display.");
+    }
+    const maxIdle = Number(spec.video.maxFinalIdleSeconds);
+    if (!Number.isFinite(maxIdle) || maxIdle < 0.5 || maxIdle > 5) {
+      errors.push("Final video idle limit must be between 0.5 and 5 seconds.");
+    }
+    if (![720, 1080, 1440, 2160].includes(Number(spec.video.minOutputHeight))) {
+      errors.push("Minimum video height must be 720, 1080, 1440, or 2160 pixels.");
+    }
+  }
   return errors;
+}
+
+function compileVideoContract(video = {}) {
+  if (!video.enabled) return "## Video contract\n\n- Disabled.";
+
+  return `## Video contract — action-only delivery
+
+- Capture scope: ${value(video.recordTarget, "active-window")}. Never record the full display.
+- Capture strategy: ${value(video.captureStrategy, "action-bursts")}.
+- The user may keep using this computer during the run. Their cursor movement, windows, notifications, and unrelated activity must never appear in the test video.
+- Record only the agent-controlled target window or a tightly bounded agent-controlled region. For multi-app workflows, create separate clips for each target surface and join them chronologically.
+- Start each clip no more than 1 second before the next visible agent action. Stop or pause after the observable result; do not record planning, reasoning, tool latency, or off-screen setup.
+- Append a timestamp before every click, keypress, type, drag, and scroll. Use these timestamps as the primary edit decision list.
+- Treat visually idle sections of at least ${Number(video.idleMinimumSeconds)} seconds as mandatory cut or speed-up regions, not optional candidates.
+- No final-video interval without an agent action or meaningful visible product response may exceed ${Number(video.maxFinalIdleSeconds)} seconds.
+- Preserve ${Number(video.paddingBeforeMotion)} second(s) before motion, ${Number(video.paddingAfterMotion)} second(s) after motion, and at least ${Number(video.preserveAfterActionSeconds)} second(s) after each action when needed to show the result.
+- Remove thinking time completely. Speed only meaningful visible progress or loading by ${Number(video.speedLongWaitsBy)}x; show speed label: ${yesNo(video.showSpeedLabel)}.
+- Keep raw capture: ${yesNo(video.keepRaw)}. Output: ${value(video.outputFormat, "mp4")}.
+- Quality floor: native source and final output must be at least ${Number(video.minOutputHeight)}p and ${Number(video.minOutputFps)} fps, with UI text readable at normal playback size. Upscaling a low-quality source does not pass.
+- Privacy review required: ${yesNo(video.privacyReview)}. Inspect representative frames from every kept segment. Any unrelated user app, private notification, or user-controlled activity makes the final video invalid; recrop, re-edit, or rerecord.
+- Editing required: ${yesNo(video.editingRequired)}. A transcode, resize, or format conversion of the raw recording without real cuts does not qualify as a final video.
+- The edit manifest must list source clips, kept time ranges, removed idle ranges, sped-up ranges, action timestamps covered, source/final duration, resolution, fps, codec, and privacy-review result.
+- Before delivery, verify first/last frames, every cut boundary, readable UI text, continuous action coverage, maximum idle duration, codec, resolution, fps, and absence of unrelated activity.
+- If deterministic editing or validation tooling is unavailable, mark the video deliverable blocked. Never rename or transcode the raw capture and claim it is edited.`;
 }
 
 export function compilePrompt(spec) {
@@ -91,6 +133,8 @@ export function compilePrompt(spec) {
       "",
       "## Execution contract",
       "Use the installed Computer Use capability for visible UI interaction. Use shell commands only for setup, recording, artifact management, and deterministic video processing. Respect all Codex confirmation requirements. If Computer Use is unavailable, stop before simulating any results and explain the missing capability.",
+      "",
+      compileVideoContract(spec.video),
     ].join("\n");
   }
 
@@ -152,19 +196,7 @@ ${list(testing.exclude, "No target-specific exclusions supplied; still obey the 
 - Capture failure screenshots: ${yesNo(report.captureFailures)}
 - End with: executive summary, environment, coverage table, defects ordered by severity, blocked/untested areas, artifact paths, and recommended follow-ups.
 
-## Video contract
-
-- Enabled: ${yesNo(video.enabled)}
-- Record: ${value(video.recordTarget, "window")}
-- Keep raw capture: ${yesNo(video.keepRaw)}
-- Output: ${value(video.outputFormat, "mp4")}
-- Treat visually idle sections of at least ${Number(video.idleMinimumSeconds)} seconds as cut candidates.
-- Preserve ${Number(video.paddingBeforeMotion)} second(s) before motion and ${Number(video.paddingAfterMotion)} second(s) after motion.
-- Preserve at least ${Number(video.preserveAfterActionSeconds)} second(s) after each click, keypress, type, drag, or scroll timestamp even when pixels appear static.
-- Speed long meaningful waits by ${Number(video.speedLongWaitsBy)}x instead of deleting all context; speed label: ${yesNo(video.showSpeedLabel)}.
-- Ignore tiny pulsing regions during idle detection by comparing downscaled/blurred frames and changed screen area.
-- Use action timestamps plus freeze/motion detection. Do not let an AI-only visual guess decide every cut.
-- Keep the raw recording and an edit manifest. Validate final duration, video codec, audio stream when present, and first/last frames.
+${compileVideoContract(video)}
 
 ## Artifacts
 
@@ -178,6 +210,7 @@ Create a run folder under \`.cu-test/runs/<run-id>/\` when the workspace is writ
 - \`raw.mp4\` when video is enabled
 - \`final.mp4\` when video is enabled
 - \`edit-manifest.json\` when video is enabled
+- \`clips/\` with per-surface source clips when video is enabled
 - \`screenshots/\`
 
 Start by restating the target, exclusions, and success criteria in no more than eight lines. Then prepare the environment and begin the session.`;
@@ -185,6 +218,8 @@ Start by restating the target, exclusions, and success criteria in no more than 
 
 export function normalizeSpec(input) {
   const defaults = defaultSpec();
+  const video = { ...defaults.video, ...(input?.video || {}) };
+  if (video.recordTarget === "window") video.recordTarget = "active-window";
   return {
     ...defaults,
     ...input,
@@ -193,6 +228,6 @@ export function normalizeSpec(input) {
     testing: { ...defaults.testing, ...(input?.testing || {}) },
     safety: { ...defaults.safety, ...(input?.safety || {}) },
     report: { ...defaults.report, ...(input?.report || {}) },
-    video: { ...defaults.video, ...(input?.video || {}) },
+    video,
   };
 }

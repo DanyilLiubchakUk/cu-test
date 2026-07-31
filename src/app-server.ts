@@ -44,7 +44,7 @@ export class CodexAppServer {
       clientInfo: {
         name: "cu_test",
         title: "CU Test",
-        version: "0.1.0",
+        version: "0.3.0",
       },
     });
     this.notify("initialized", {});
