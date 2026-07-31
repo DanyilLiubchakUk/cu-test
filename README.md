@@ -8,6 +8,29 @@ CU Test is a local-first prompt studio for general-purpose Codex Computer Use te
 
 It has no npm dependencies. Bun and a signed-in Codex CLI are the only runtime requirements.
 
+## Clone and run
+
+```bash
+git clone https://github.com/DanyilLiubchakUk/cu-test.git
+cd cu-test
+bun test
+bun run web
+```
+
+Open [http://127.0.0.1:4318](http://127.0.0.1:4318). For `cu-test` commands
+from any directory, copy the setup for your shell from
+[`ALIAS_SETUP.md`](ALIAS_SETUP.md).
+
+To make the bundled skill available to Codex from this clone:
+
+```bash
+mkdir -p ~/.codex/skills
+ln -s "$(pwd)/skills/cu-test" ~/.codex/skills/cu-test
+```
+
+Restart Codex or begin a new task, then invoke `$cu-test`. Agents working in
+this repository should also follow [`AGENTS.md`](AGENTS.md).
+
 ## Start locally
 
 ```bash
@@ -40,6 +63,22 @@ bun run cu-test run ./examples/connection-smoke.json
 ```
 
 To use `cu-test` from any directory without npm, npx, publishing, or packaging, follow [`ALIAS_SETUP.md`](ALIAS_SETUP.md).
+
+## Video quality gate
+
+Video defaults to action-only capture of the active test window. CU Test assumes the user may continue working on the same computer, so unrelated windows, notifications, cursor activity, and full-display recording are excluded from valid final footage.
+
+For workflows that switch between a browser, inbox, simulator, or desktop app, the operator records separate clips for each target surface and joins only the action-bearing ranges. Thinking time is cut, while meaningful visible loading may be accelerated with a label.
+
+A final video must prove all of the following in `edit-manifest.json`:
+
+- Every kept range maps to an action timestamp or meaningful visible response.
+- No idle interval exceeds the configured final-idle limit.
+- Output meets the configured native resolution and frame-rate floor with readable UI text.
+- Representative frames contain no unrelated user activity or private notifications.
+- Source/final durations, cuts, speed changes, codec, resolution, and frame rate were validated.
+
+A resize, transcode, or extension change without real cuts is not an edited video. If the required editing or validation tooling is unavailable, the video is reported as blocked instead of shipping the raw capture as `final`.
 
 ## Vercel + local Codex
 
@@ -88,3 +127,7 @@ The CLI uses the same App Server client directly, so it does not need the web br
 - Approval requests are never automatically accepted.
 
 Official protocol reference: [Codex App Server](https://learn.chatgpt.com/docs/app-server).
+
+## License
+
+CU Test is available under the permissive [MIT License](LICENSE).
