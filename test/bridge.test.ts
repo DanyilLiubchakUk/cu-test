@@ -16,6 +16,19 @@ describe("local bridge", () => {
     expect(await response.text()).toContain("What should Codex test?");
   });
 
+  test("serves search and install metadata", async () => {
+    const [icon, manifest, robots, sitemap] = await Promise.all([
+      fetch(`${bridge.url}/favicon.svg`),
+      fetch(`${bridge.url}/site.webmanifest`),
+      fetch(`${bridge.url}/robots.txt`),
+      fetch(`${bridge.url}/sitemap.xml`),
+    ]);
+    expect(icon.headers.get("Content-Type")).toBe("image/svg+xml");
+    expect(manifest.headers.get("Content-Type")).toBe("application/manifest+json");
+    expect(await robots.text()).toContain("Sitemap:");
+    expect(await sitemap.text()).toContain("cu-test-beta.vercel.app");
+  });
+
   test("requires pairing for cross-origin API calls", async () => {
     const response = await fetch(`${bridge.url}/api/prompt`, {
       method: "POST",

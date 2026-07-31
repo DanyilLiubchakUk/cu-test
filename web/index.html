@@ -3,21 +3,38 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Build and launch Codex Computer Use test sessions." />
-    <title>CU Test — Computer Use test studio</title>
-    <link rel="stylesheet" href="/styles.css" />
+    <meta name="description" content="Plan, review, and launch local-first Codex Computer Use test sessions from one focused studio." />
+    <meta name="application-name" content="CU Test" />
+    <meta name="author" content="Danyil Liubchak" />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#10151c" />
+    <meta name="color-scheme" content="light" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="CU Test" />
+    <meta property="og:title" content="CU Test — Codex Computer Use Test Studio" />
+    <meta property="og:description" content="Build safe, reviewable Computer Use test sessions and launch them in your local Codex environment." />
+    <meta property="og:url" content="https://cu-test-beta.vercel.app/" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="CU Test — Codex Computer Use Test Studio" />
+    <meta name="twitter:description" content="A local-first prompt studio for planning and launching Codex Computer Use tests." />
+    <title>CU Test — Codex Computer Use Test Studio</title>
+    <link rel="canonical" href="https://cu-test-beta.vercel.app/" />
+    <link rel="icon" href="/favicon.svg?v=0.2.0" type="image/svg+xml" />
+    <link rel="manifest" href="/site.webmanifest?v=0.2.0" />
+    <link rel="stylesheet" href="/styles.css?v=0.2.0" />
   </head>
   <body>
+    <a class="skip-link" href="#main-content">Skip to test builder</a>
     <div class="ambient-grid" aria-hidden="true"></div>
     <header class="app-bar">
-      <a class="brand" href="#top" aria-label="CU Test home">
+      <a class="brand" href="#main-content" aria-label="CU Test home">
         <span class="brand-mark"><i></i><i></i></span>
         <span><strong>CU Test</strong><small>Computer Use studio</small></span>
       </a>
       <div class="breadcrumb"><span>Studio</span><b>/</b><strong>New run</strong></div>
       <div class="app-actions">
         <span class="privacy-note"><i>●</i> Local-first</span>
-        <button class="connection-pill" id="connectionButton" type="button">
+        <button class="connection-pill" id="connectionButton" type="button" aria-haspopup="dialog" aria-controls="connectionDialog" aria-expanded="false">
           <span class="status-dot" id="statusDot"></span>
           <span id="connectionLabel">Connect Codex</span>
           <b>⌄</b>
@@ -25,7 +42,7 @@
       </div>
     </header>
 
-    <main id="top">
+    <main id="main-content" tabindex="-1">
       <section class="page-head">
         <div>
           <p class="eyebrow">New test run</p>
@@ -39,8 +56,8 @@
         </div>
       </section>
 
-      <section class="starter-strip" aria-label="Quick start templates">
-        <div class="starter-label"><span>Quick start</span><small>Fill the form with a sensible baseline</small></div>
+      <section class="starter-strip" aria-labelledby="quick-start-title">
+        <div class="starter-label"><h2 id="quick-start-title">Quick start</h2><small>Fill the form with a sensible baseline</small></div>
         <div class="starter-options">
           <button data-template="website" type="button"><span>◫</span><strong>Website smoke</strong><small>Core journeys + safety</small></button>
           <button data-template="mobile" type="button"><span>◇</span><strong>Mobile checkout</strong><small>Simulator + inbox</small></button>
@@ -51,16 +68,16 @@
       <section class="studio-shell" aria-label="Test session builder">
         <nav class="studio-rail">
           <div class="mode-switch" role="tablist" aria-label="Prompt mode">
-            <button class="mode-option active" role="tab" aria-selected="true" data-mode="guided" type="button"><span>Guided</span></button>
-            <button class="mode-option" role="tab" aria-selected="false" data-mode="custom" type="button"><span>Custom</span></button>
+            <button class="mode-option active" id="guidedModeTab" role="tab" aria-selected="true" aria-controls="guidedFields" data-mode="guided" type="button"><span>Guided</span></button>
+            <button class="mode-option" id="customModeTab" role="tab" aria-selected="false" aria-controls="customFields" data-mode="custom" type="button"><span>Custom</span></button>
           </div>
 
-          <div class="guided-stepper">
+          <div class="guided-stepper" aria-label="Guided setup progress">
             <p>Build your run</p>
-            <button class="step-link active" data-step="target" type="button"><span>01</span><div><strong>Target</strong><small>What Codex operates</small></div><i></i></button>
-            <button class="step-link" data-step="environment" type="button"><span>02</span><div><strong>Environment</strong><small>Where it runs</small></div><i></i></button>
-            <button class="step-link" data-step="coverage" type="button"><span>03</span><div><strong>Coverage</strong><small>Test and avoid</small></div><i></i></button>
-            <button class="step-link" data-step="evidence" type="button"><span>04</span><div><strong>Evidence</strong><small>Reports and video</small></div><i></i></button>
+            <button class="step-link active" data-step="target" type="button" aria-controls="step-target" aria-current="step"><span>01</span><div><strong>Target</strong><small>What Codex operates</small></div><i aria-hidden="true"></i></button>
+            <button class="step-link" data-step="environment" type="button" aria-controls="step-environment"><span>02</span><div><strong>Environment</strong><small>Where it runs</small></div><i aria-hidden="true"></i></button>
+            <button class="step-link" data-step="coverage" type="button" aria-controls="step-coverage"><span>03</span><div><strong>Coverage</strong><small>Test and avoid</small></div><i aria-hidden="true"></i></button>
+            <button class="step-link" data-step="evidence" type="button" aria-controls="step-evidence"><span>04</span><div><strong>Evidence</strong><small>Reports and video</small></div><i aria-hidden="true"></i></button>
           </div>
 
           <div class="rail-note">
@@ -76,16 +93,16 @@
               <input name="name" value="Checkout smoke test" autocomplete="off" />
             </label>
 
-            <div id="guidedFields">
-              <section class="form-section step-panel active" data-panel="target">
-                <div class="section-heading"><span>01</span><div><p>Target</p><h2>Choose what Codex will operate</h2><small>Start with one clear entry point. Mixed mode can move between surfaces.</small></div></div>
+            <div id="guidedFields" role="tabpanel" aria-labelledby="guidedModeTab">
+              <section class="form-section step-panel active" id="step-target" data-panel="target" aria-labelledby="step-target-title">
+                <div class="section-heading"><span>01</span><div><p>Target</p><h2 id="step-target-title">Choose what Codex will operate</h2><small>Start with one clear entry point. Mixed mode can move between surfaces.</small></div></div>
                 <fieldset class="target-picker">
                   <legend>Surface</legend>
                   <div class="segmented" id="targetType">
-                    <button class="selected" data-value="website" type="button"><b>◫</b><span>Website</span></button>
-                    <button data-value="simulator" type="button"><b>◇</b><span>Simulator</span></button>
-                    <button data-value="desktop-app" type="button"><b>▣</b><span>Desktop app</span></button>
-                    <button data-value="mixed" type="button"><b>⌘</b><span>Mixed</span></button>
+                    <button class="selected" data-value="website" type="button" aria-pressed="true"><b aria-hidden="true">◫</b><span>Website</span></button>
+                    <button data-value="simulator" type="button" aria-pressed="false"><b aria-hidden="true">◇</b><span>Simulator</span></button>
+                    <button data-value="desktop-app" type="button" aria-pressed="false"><b aria-hidden="true">▣</b><span>Desktop app</span></button>
+                    <button data-value="mixed" type="button" aria-pressed="false"><b aria-hidden="true">⌘</b><span>Mixed</span></button>
                   </div>
                 </fieldset>
                 <div class="field-grid">
@@ -95,8 +112,8 @@
                 </div>
               </section>
 
-              <section class="form-section step-panel" data-panel="environment">
-                <div class="section-heading"><span>02</span><div><p>Environment</p><h2>Give Codex the right context</h2><small>Describe setup details and helper services without exposing secret values.</small></div></div>
+              <section class="form-section step-panel" id="step-environment" data-panel="environment" aria-labelledby="step-environment-title">
+                <div class="section-heading"><span>02</span><div><p>Environment</p><h2 id="step-environment-title">Give Codex the right context</h2><small>Describe setup details and helper services without exposing secret values.</small></div></div>
                 <div class="field-grid">
                   <label class="field full"><span>Project directory</span><input name="cwd" placeholder="/Users/you/dev/project" /></label>
                   <label class="field full"><span>Testing environment</span><textarea name="environmentDescription" rows="4" placeholder="Staging API. Verification emails appear at 127.0.0.1:8025…"></textarea></label>
@@ -106,8 +123,8 @@
                 </div>
               </section>
 
-              <section class="form-section step-panel" data-panel="coverage">
-                <div class="section-heading"><span>03</span><div><p>Coverage</p><h2>Define success and hard boundaries</h2><small>Each line becomes a distinct instruction in the generated prompt.</small></div></div>
+              <section class="form-section step-panel" id="step-coverage" data-panel="coverage" aria-labelledby="step-coverage-title">
+                <div class="section-heading"><span>03</span><div><p>Coverage</p><h2 id="step-coverage-title">Define success and hard boundaries</h2><small>Each line becomes a distinct instruction in the generated prompt.</small></div></div>
                 <div class="field-grid">
                   <label class="field"><span>Personas <em>One per line</em></span><textarea name="personas" rows="6" placeholder="Guest shopper&#10;Verified customer"></textarea></label>
                   <label class="field"><span>Things to test <em>One per line</em></span><textarea name="include" rows="6" placeholder="Sign up and verify email&#10;Browse products&#10;Complete test checkout"></textarea></label>
@@ -121,8 +138,8 @@
                 </div>
               </section>
 
-              <section class="form-section step-panel" data-panel="evidence">
-                <div class="section-heading"><span>04</span><div><p>Evidence</p><h2>Choose what the run leaves behind</h2><small>Reports and video are generated in the run artifact folder.</small></div></div>
+              <section class="form-section step-panel" id="step-evidence" data-panel="evidence" aria-labelledby="step-evidence-title">
+                <div class="section-heading"><span>04</span><div><p>Evidence</p><h2 id="step-evidence-title">Choose what the run leaves behind</h2><small>Reports and video are generated in the run artifact folder.</small></div></div>
                 <div class="evidence-layout">
                   <div class="settings-card">
                     <div class="card-heading"><span>▤</span><div><h3>Report</h3><small>Structured results and screenshots</small></div></div>
@@ -135,7 +152,7 @@
                     </div>
                   </div>
                   <div class="settings-card video-settings">
-                    <div class="card-heading"><span>▶</span><div><h3>Video</h3><small>Cut idle time, preserve actions</small></div><label class="toggle-field compact"><input name="videoEnabled" type="checkbox" checked /><span class="toggle"></span></label></div>
+                    <div class="card-heading"><span>▶</span><div><h3>Video</h3><small>Cut idle time, preserve actions</small></div><label class="toggle-field compact"><input name="videoEnabled" type="checkbox" checked aria-label="Enable video capture" /><span class="toggle"></span></label></div>
                     <div class="mini-grid">
                       <label class="field"><span>Idle cut after</span><div class="unit-input"><input name="idleMinimum" type="number" min="1" value="3" /><b>sec</b></div></label>
                       <label class="field"><span>Speed waits</span><div class="unit-input"><input name="speedLongWaits" type="number" min="1" value="20" /><b>×</b></div></label>
@@ -148,7 +165,7 @@
               </section>
             </div>
 
-            <div id="customFields" hidden>
+            <div id="customFields" role="tabpanel" aria-labelledby="customModeTab" hidden>
               <section class="form-section custom-panel">
                 <div class="section-heading"><span>✦</span><div><p>Custom mode</p><h2>Write the complete instruction</h2><small>CU Test adds only the minimum Computer Use execution contract.</small></div></div>
                 <label class="field full"><span>Complete instructions for Codex</span><textarea class="custom-prompt" name="customPrompt" rows="18" placeholder="Use Computer Use to test…"></textarea></label>
@@ -157,7 +174,7 @@
           </form>
 
           <div class="step-controls">
-            <button class="back-button" id="previousStep" type="button">← Back</button>
+            <button class="back-button" id="previousStep" type="button" disabled>← Back</button>
             <span id="stepProgress">Step 1 of 4</span>
             <button class="next-button" id="nextStep" type="button">Environment <b>→</b></button>
           </div>
@@ -169,10 +186,10 @@
               <div><p>Generated instruction</p><h2>Prompt preview</h2></div>
               <span id="promptStats">0 words</span>
             </div>
-            <div class="review-tabs" role="tablist"><button class="active" data-review="prompt" type="button">Prompt</button><button data-review="json" type="button">JSON spec</button></div>
-            <textarea id="promptPreview" aria-label="Generated prompt" readonly></textarea>
-            <pre id="jsonPreview" hidden></pre>
-            <div class="validation" id="validationMessage"><span>✓</span><div><strong>Ready to review</strong><small>All required fields are present</small></div></div>
+            <div class="review-tabs" role="tablist" aria-label="Preview format"><button class="active" id="promptTab" role="tab" aria-selected="true" aria-controls="promptPreview" data-review="prompt" type="button">Prompt</button><button id="jsonTab" role="tab" aria-selected="false" aria-controls="jsonPreview" data-review="json" type="button">JSON spec</button></div>
+            <textarea id="promptPreview" role="tabpanel" aria-labelledby="promptTab" aria-label="Generated prompt" readonly></textarea>
+            <pre id="jsonPreview" role="tabpanel" aria-labelledby="jsonTab" tabindex="0" hidden></pre>
+            <div class="validation" id="validationMessage" role="status" aria-live="polite"><span>✓</span><div><strong>Ready to review</strong><small>All required fields are present</small></div></div>
             <div class="review-actions">
               <button class="secondary-button" id="copyButton" type="button"><span>Copy</span><b>⌘C</b></button>
               <button class="launch-button" id="launchButton" type="button"><span>Launch in Codex</span><b>↗</b></button>
@@ -186,7 +203,7 @@
       <section class="run-section" id="runSection" hidden>
         <div class="section-heading light"><span>●</span><div><p>Live run</p><h2 id="runName">Test run</h2></div></div>
         <div class="run-card">
-          <div class="run-meta"><span class="run-status" id="runStatus">Starting</span><a id="threadLink" href="#">Open Codex task ↗</a></div>
+          <div class="run-meta"><span class="run-status" id="runStatus" aria-live="polite">Starting</span><a id="threadLink" href="#">Open Codex task ↗</a></div>
           <div class="event-stream" id="eventStream" aria-live="polite"></div>
           <button class="stop-button" id="stopButton" type="button">Stop run</button>
         </div>
@@ -197,29 +214,29 @@
       </section>
     </main>
 
-    <footer><span>CU Test <b>0.1</b></span><span>Local bridge · App Server · Computer Use</span></footer>
+    <footer><span>CU Test <b>0.2</b></span><span>Local bridge · App Server · Computer Use</span></footer>
 
-    <dialog id="connectionDialog">
+    <dialog id="connectionDialog" aria-labelledby="connectionTitle" aria-describedby="connectionDescription">
       <button class="dialog-close" id="closeDialog" aria-label="Close" type="button">×</button>
       <div class="dialog-icon"><span></span><span></span></div>
       <p class="eyebrow">Local bridge</p>
-      <h2>Connect this page to Codex</h2>
-      <p class="dialog-intro">The interface can live on Vercel. Codex stays on your Mac, connected through a temporary loopback bridge.</p>
+      <h2 id="connectionTitle">Connect this page to Codex</h2>
+      <p class="dialog-intro" id="connectionDescription">The interface can live on Vercel. Codex stays on your Mac, connected through a temporary loopback bridge.</p>
       <ol class="connection-steps">
         <li><span>1</span><div><strong>Start the bridge</strong><code id="bridgeCommand">cu-test web --allow-origin https://your-site.vercel.app</code></div></li>
         <li><span>2</span><div><strong>Paste the pair code</strong><p>It changes whenever the bridge restarts.</p></div></li>
         <li><span>3</span><div><strong>Allow local network access</strong><p>Your browser may ask the first time.</p></div></li>
       </ol>
       <div class="connection-fields">
-        <label class="field"><span>Bridge URL</span><input id="bridgeUrl" value="http://127.0.0.1:4318" /></label>
+        <label class="field"><span>Bridge URL</span><input id="bridgeUrl" type="url" inputmode="url" value="http://127.0.0.1:4318" /></label>
         <label class="field"><span>Pair code</span><input id="pairCode" type="password" placeholder="Paste from terminal" /></label>
       </div>
-      <p class="connection-error" id="connectionError"></p>
+      <p class="connection-error" id="connectionError" role="alert"></p>
       <button class="launch-button full-button" id="connectButton" type="button"><span>Connect local Codex</span><b>→</b></button>
       <p class="local-tip">On <code>127.0.0.1:4318</code>, connection is automatic.</p>
     </dialog>
 
-    <div class="toast" id="toast" role="status"></div>
-    <script type="module" src="/app.js"></script>
+    <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+    <script type="module" src="/app.js?v=0.2.0"></script>
   </body>
 </html>

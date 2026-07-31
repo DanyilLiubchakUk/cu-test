@@ -1,0 +1,12 @@
+{
+  "name": "CU Test — Codex Computer Use Test Studio",
+  "short_name": "CU Test",
+  "description": "Plan, review, and launch local-first Codex Computer Use test sessions.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#eef1ec",
+  "theme_color": "#10151c",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

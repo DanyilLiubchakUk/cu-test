@@ -35,6 +35,10 @@ function getMime(pathname: string) {
   if (pathname.endsWith(".html")) return "text/html; charset=utf-8";
   if (pathname.endsWith(".css")) return "text/css; charset=utf-8";
   if (pathname.endsWith(".js")) return "text/javascript; charset=utf-8";
+  if (pathname.endsWith(".svg")) return "image/svg+xml";
+  if (pathname.endsWith(".webmanifest")) return "application/manifest+json";
+  if (pathname.endsWith(".xml")) return "application/xml; charset=utf-8";
+  if (pathname.endsWith(".txt")) return "text/plain; charset=utf-8";
   return "application/octet-stream";
 }
 
@@ -200,6 +204,10 @@ export async function startBridge(options: BridgeOptions = {}) {
         "/styles.css": "web/styles.css",
         "/app.js": "web/app.js",
         "/prompt.js": "shared/prompt.js",
+        "/favicon.svg": "web/favicon.svg",
+        "/site.webmanifest": "web/site.webmanifest",
+        "/robots.txt": "web/robots.txt",
+        "/sitemap.xml": "web/sitemap.xml",
       };
       const relative = staticFiles[url.pathname];
       if (!relative) return new Response("Not found", { status: 404 });
@@ -207,7 +215,7 @@ export async function startBridge(options: BridgeOptions = {}) {
       return new Response(file, {
         headers: {
           "Content-Type": getMime(url.pathname === "/" ? ".html" : url.pathname),
-          "Cache-Control": url.pathname === "/" ? "no-cache" : "public, max-age=60",
+          "Cache-Control": "no-cache",
         },
       });
     },

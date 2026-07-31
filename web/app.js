@@ -146,8 +146,17 @@ function setMode(nextMode) {
 function setActiveStep(step) {
   if (!guidedSteps.includes(step)) return;
   activeStep = step;
-  document.querySelectorAll(".step-panel").forEach((panel) => panel.classList.toggle("active", panel.dataset.panel === step));
-  document.querySelectorAll(".step-link").forEach((button) => button.classList.toggle("active", button.dataset.step === step));
+  document.querySelectorAll(".step-panel").forEach((panel) => {
+    const active = panel.dataset.panel === step;
+    panel.classList.toggle("active", active);
+    panel.hidden = !active;
+  });
+  document.querySelectorAll(".step-link").forEach((button) => {
+    const active = button.dataset.step === step;
+    button.classList.toggle("active", active);
+    if (active) button.setAttribute("aria-current", "step");
+    else button.removeAttribute("aria-current");
+  });
   const index = guidedSteps.indexOf(step);
   const previous = document.querySelector("#previousStep");
   const next = document.querySelector("#nextStep");
@@ -176,7 +185,11 @@ function updateWorkspaceSummary() {
 
 function setTargetType(value) {
   targetType = value;
-  document.querySelectorAll("#targetType button").forEach((button) => button.classList.toggle("selected", button.dataset.value === value));
+  document.querySelectorAll("#targetType button").forEach((button) => {
+    const selected = button.dataset.value === value;
+    button.classList.toggle("selected", selected);
+    button.setAttribute("aria-pressed", String(selected));
+  });
   updatePreview();
 }
 
@@ -237,6 +250,7 @@ async function connect(showErrors = true) {
     statusDot.classList.add("connected");
     connectionLabel.textContent = status.codex.authenticated ? "Codex connected" : "Codex needs sign-in";
     connectionDialog.close();
+    document.querySelector("#connectionButton").setAttribute("aria-expanded", "false");
     notify("Local Codex connected");
     return true;
   } catch (cause) {
@@ -251,6 +265,7 @@ async function connect(showErrors = true) {
 async function launch() {
   if (!bridge.connected && !(await connect(false))) {
     connectionDialog.showModal();
+    document.querySelector("#connectionButton").setAttribute("aria-expanded", "true");
     document.querySelector("#connectionError").textContent = "Connect the local bridge before launching.";
     return;
   }
@@ -374,7 +389,11 @@ document.querySelectorAll("[data-template]").forEach((button) => button.addEvent
   notify(`${button.querySelector("strong").textContent} template applied`);
 }));
 document.querySelectorAll(".review-tabs button").forEach((button) => button.addEventListener("click", () => {
-  document.querySelectorAll(".review-tabs button").forEach((item) => item.classList.toggle("active", item === button));
+  document.querySelectorAll(".review-tabs button").forEach((item) => {
+    const active = item === button;
+    item.classList.toggle("active", active);
+    item.setAttribute("aria-selected", String(active));
+  });
   promptPreview.hidden = button.dataset.review !== "prompt";
   jsonPreview.hidden = button.dataset.review !== "json";
 }));
@@ -387,8 +406,12 @@ document.querySelector("#importInput").addEventListener("change", async (event) 
   try { applySpec(JSON.parse(await file.text())); notify("Specification imported"); } catch { notify("That JSON file is not valid", true); }
 });
 launchButton.addEventListener("click", launch);
-document.querySelector("#connectionButton").addEventListener("click", () => connectionDialog.showModal());
+document.querySelector("#connectionButton").addEventListener("click", () => {
+  connectionDialog.showModal();
+  document.querySelector("#connectionButton").setAttribute("aria-expanded", "true");
+});
 document.querySelector("#closeDialog").addEventListener("click", () => connectionDialog.close());
+connectionDialog.addEventListener("close", () => document.querySelector("#connectionButton").setAttribute("aria-expanded", "false"));
 document.querySelector("#connectButton").addEventListener("click", () => connect(true));
 document.querySelector("#stopButton").addEventListener("click", async () => {
   if (!activeRunId) return;
@@ -405,5 +428,6 @@ if (location.protocol.startsWith("http") && !location.hostname.match(/^(127\.0\.
 }
 
 const saved = localStorage.getItem("cu-test-last-spec");
+setActiveStep(activeStep);
 if (saved) { try { applySpec(JSON.parse(saved)); } catch { updatePreview(); } } else { updatePreview(); }
 if (/^(127\.0\.0\.1|localhost)$/.test(location.hostname) || bridge.token) connect(false);

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="CU Test">
+  <rect width="64" height="64" rx="18" fill="#10151c"/>
+  <circle cx="23" cy="22" r="10" fill="#c9ff54"/>
+  <circle cx="43" cy="43" r="9" fill="none" stroke="#fbfcf9" stroke-width="5"/>
+  <path d="M31 27.5 36.5 33" stroke="#526cff" stroke-width="4" stroke-linecap="round"/>
+</svg>

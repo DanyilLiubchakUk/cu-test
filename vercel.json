@@ -3,7 +3,11 @@
     { "source": "/", "destination": "/web/index.html" },
     { "source": "/styles.css", "destination": "/web/styles.css" },
     { "source": "/app.js", "destination": "/web/app.js" },
-    { "source": "/prompt.js", "destination": "/shared/prompt.js" }
+    { "source": "/prompt.js", "destination": "/shared/prompt.js" },
+    { "source": "/favicon.svg", "destination": "/web/favicon.svg" },
+    { "source": "/site.webmanifest", "destination": "/web/site.webmanifest" },
+    { "source": "/robots.txt", "destination": "/web/robots.txt" },
+    { "source": "/sitemap.xml", "destination": "/web/sitemap.xml" }
   ],
   "headers": [
     {
