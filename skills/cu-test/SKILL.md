@@ -41,13 +41,18 @@ Do not silently substitute Playwright, Maestro, Appium, or another UI automation
 
 When video is enabled:
 
-1. Start native window/display recording before the first visible action.
-2. Append a timestamp before each click, keypress, type, drag, and scroll.
-3. Preserve the raw recording.
-4. Detect cut candidates with downscaled, blurred frame comparison and changed-area thresholds.
-5. Preserve configured padding and the post-action window even when frames appear static.
-6. Speed meaningful long waits instead of removing every trace of loading.
-7. Keep an edit manifest and validate duration, codec, optional audio, and boundary frames.
+1. Assume the user may continue using the computer during the run. Never record the full display by default.
+2. Capture only the active test window or a tight agent-controlled region. For browser-to-inbox, app-to-simulator, or other multi-surface workflows, record separate clips per surface.
+3. Use action-burst recording: begin no more than one second before the next visible action, then pause or stop after its observable result. Do not capture planning, reasoning, tool latency, or unrelated user activity.
+4. Append a timestamp before each click, keypress, type, drag, and scroll. Treat the action log as the primary edit decision list.
+5. Preserve the raw clips. Join kept ranges chronologically, cut thinking time, and speed only meaningful visible waits.
+6. Enforce the specification's maximum final idle interval. A section with no agent action or meaningful product response beyond that limit is a video defect.
+7. Require readable native capture and final output at the configured resolution and frame rate. Upscaling an unreadable source does not pass.
+8. Inspect representative frames from every kept segment for unrelated apps, private notifications, user cursor activity, and readable UI text. Any unrelated user activity invalidates the final deliverable.
+9. Keep an edit manifest listing source clips, kept/cut/sped-up ranges, action coverage, source/final duration, resolution, fps, codec, and privacy result.
+10. Validate first and last frames, every cut boundary, action continuity, maximum idle duration, quality, and privacy before delivery.
+
+A transcode, resize, or extension change without real cuts is not an edited video. If deterministic editing or validation tooling is unavailable, report the video as blocked and deliver the report/screenshots only. Never label the raw capture as final.
 
 Use action timestamps plus deterministic freeze/motion detection. Use model judgment only to inspect ambiguous cut boundaries, not to decide every frame.
 
