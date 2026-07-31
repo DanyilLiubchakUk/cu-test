@@ -1,0 +1,16 @@
+{
+  "name": "cu-test",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "cu-test": "./src/cli.ts"
+  },
+  "scripts": {
+    "cu-test": "bun src/cli.ts",
+    "web": "bun src/cli.ts web",
+    "dev": "bun --watch src/cli.ts web",
+    "test": "bun test",
+    "check": "bun test"
+  }
+}

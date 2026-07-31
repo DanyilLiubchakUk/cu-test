@@ -1,0 +1,4 @@
+interface:
+  display_name: "CU Test"
+  short_description: "Plan and run Computer Use test sessions"
+  default_prompt: "Use $cu-test to build and run a guided Computer Use test session."

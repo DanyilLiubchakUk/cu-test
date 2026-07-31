@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "name": "CU Test connection smoke check",
+  "mode": "custom",
+  "customPrompt": "This is a connection smoke check. Do not use tools or control any UI. Reply only with: CU Test connection ready.",
+  "environment": {
+    "cwd": ""
+  },
+  "testing": {
+    "maxDurationMinutes": 5
+  }
+}
